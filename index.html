@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Faces of the Deck</title>
+
+<style>
+
+
+body{
+    margin:0;
+    font-family:Georgia, serif;
+    background:#141414;
+    color:white;
+    text-align:center;
+}
+
+#overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    opacity:0;
+    transition:0.5s;
+    pointer-events:none;
+}
+
+h1{
+    margin-top:30px;
+}
+
+
+
+.cardArea{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:40px;
+    margin-top:40px;
+}
+
+.arrow{
+    font-size:40px;
+    cursor:pointer;
+    user-select:none;
+}
+
+.card{
+    width:260px;
+    height:360px;
+
+    background:#f4e4bc;
+    color:black;
+
+    border:4px solid gold;
+    border-radius:15px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:scale(1.05);
+}
+
+.cardSymbol{
+    font-size:80px;
+}
+
+.cardName{
+    font-size:22px;
+    margin-top:10px;
+}
+
+
+
+#quickNav{
+    margin-top:40px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+}
+
+.navCard{
+    width:55px;
+    height:70px;
+    background:#f4e4bc;
+    color:black;
+    border:2px solid gold;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+}
+
+.navCard:hover{
+    transform:scale(1.1);
+}
+
+.active{
+    background:gold;
+}
+
+
+
+#detailPage{
+    display:none;
+    padding:40px;
+}
+
+#detailImage{
+    width:300px;
+    margin-top:20px;
+    border-radius:10px;
+}
+
+#detailText{
+    width:70%;
+    margin:30px auto;
+    line-height:1.8;
+}
+
+#returnBtn{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    padding:10px 20px;
+    background:gold;
+    border:none;
+    cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="overlay"></div>
+
+
+<div id="mainPage">
+
+<h1>Faces of the Deck</h1>
+
+<div class="cardArea">
+
+    <div class="arrow" onclick="prevCard()">◀</div>
+
+    <div class="card" id="mainCard" onclick="showInfo()">
+
+        <div id="symbol" class="cardSymbol"></div>
+
+        <div id="name" class="cardName"></div>
+
+        <div style="font-size:12px;margin-top:10px;">
+            Hover to see history
+        </div>
+
+    </div>
+
+    <div class="arrow" onclick="nextCard()">▶</div>
+
+</div>
+
+
+<div id="quickNav"></div>
+
+</div>
+
+
+<div id="detailPage">
+
+<h2 id="detailTitle"></h2>
+
+<img id="detailImage">
+
+<p id="detailText"></p>
+
+<button id="returnBtn" onclick="goBack()">
+Return
+</button>
+
+</div>
+
+<script>
+
+
+
+var current = 0;
+
+
+
+var cards = [
+
+{
+symbol:"K♠",
+name:"King David",
+
+background:"images/backgrounds/david.jpg",
+
+portrait:"images/portraits/david.jpg",
+
+info:"King David was a king of Israel."
+},
+
+{
+symbol:"K♥",
+name:"Charlemagne",
+background:"images/backgrounds/charlemagne.jpg",
+portrait:"images/portraits/charlemagne.jpg",
+info:"Charlemagne united Europe."
+},
+
+{
+symbol:"K♣",
+name:"Alexander the Great",
+background:"images/backgrounds/alexander.jpg",
+portrait:"images/portraits/alexander.jpg",
+info:"Alexander built a huge empire."
+},
+
+{
+symbol:"K♦",
+name:"Julius Caesar",
+background:"images/backgrounds/caesar.jpg",
+portrait:"images/portraits/caesar.jpg",
+info:"Caesar changed Rome."
+},
+
+{
+symbol:"Q♠",
+name:"Athena",
+background:"images/backgrounds/athena.jpg",
+portrait:"images/portraits/athena.jpg",
+info:"Greek goddess of wisdom."
+},
+
+{
+symbol:"Q♥",
+name:"Judith",
+background:"images/backgrounds/judith.jpg",
+portrait:"images/portraits/judith.jpg",
+info:"A brave heroine."
+},
+
+{
+symbol:"Q♣",
+name:"Argine",
+background:"images/backgrounds/argine.jpg",
+portrait:"images/portraits/argine.jpg",
+info:"Symbolic queen."
+},
+
+{
+symbol:"Q♦",
+name:"Rachel",
+background:"images/backgrounds/rachel.jpg",
+portrait:"images/portraits/rachel.jpg",
+info:"Biblical figure."
+},
+
+{
+symbol:"J♠",
+name:"Ogier",
+background:"images/backgrounds/ogier.jpg",
+portrait:"images/portraits/ogier.jpg",
+info:"Legendary knight."
+},
+
+{
+symbol:"J♥",
+name:"La Hire",
+background:"images/backgrounds/lahire.jpg",
+portrait:"images/portraits/lahire.jpg",
+info:"French warrior."
+},
+
+{
+symbol:"J♣",
+name:"Lancelot",
+background:"images/backgrounds/lancelot.jpg",
+portrait:"images/portraits/lancelot.jpg",
+info:"Knight of Round Table."
+},
+
+{
+symbol:"J♦",
+name:"Hector",
+background:"images/backgrounds/hector.jpg",
+portrait:"images/portraits/hector.jpg",
+info:"Trojan hero."
+}
+
+];
+
+
+
+function updateCard(){
+
+document.getElementById("symbol").innerHTML =
+cards[current].symbol;
+
+document.getElementById("name").innerHTML =
+cards[current].name;
+
+createNav();
+}
+
+
+function nextCard(){
+current++;
+if(current >= cards.length){
+current = 0;
+}
+updateCard();
+}
+
+
+
+function prevCard(){
+current--;
+if(current < 0){
+current = cards.length - 1;
+}
+updateCard();
+}
+
+
+
+function createNav(){
+
+var nav = document.getElementById("quickNav");
+nav.innerHTML = "";
+
+for(var i=0;i<cards.length;i++){
+
+var box = document.createElement("div");
+box.className = "navCard";
+
+if(i == current){
+box.classList.add("active");
+}
+
+box.innerHTML = cards[i].symbol;
+
+box.onclick = (function(index){
+return function(){
+current = index;
+updateCard();
+}
+})(i);
+
+nav.appendChild(box);
+}
+}
+
+
+
+var mainCard = document.getElementById("mainCard");
+
+mainCard.addEventListener("mouseenter",function(){
+
+document.body.style.backgroundImage =
+"url('" + cards[current].background + "')";
+
+document.body.style.backgroundSize = "cover";
+document.body.style.backgroundPosition = "center";
+
+document.getElementById("overlay").style.opacity = "1";
+
+});
+
+mainCard.addEventListener("mouseleave",function(){
+
+document.body.style.backgroundImage = "none";
+document.getElementById("overlay").style.opacity = "0";
+
+});
+
+
+
+function showInfo(){
+
+document.getElementById("mainPage").style.display = "none";
+document.getElementById("detailPage").style.display = "block";
+
+document.getElementById("detailTitle").innerHTML =
+cards[current].name;
+
+document.getElementById("detailText").innerHTML =
+cards[current].info;
+
+document.getElementById("detailImage").src =
+cards[current].portrait;
+}
+
+/* ======================
+  This project is an interactive prototype design based on web browsers, 
+  with the theme of "Historical Presentation of Poker Card Characters".
+   By replacing the J, Q, and K characters in traditional poker cards 
+   with historical and mythological figures, a narrative-oriented visual 
+   interactive experience is constructed. This prototype is mainly used 
+   to showcase the basic front-end interaction design concepts, rather 
+   than a complete website system. 
+
+In terms of interaction methods, this project mainly employs three operations:
+ hovering (hover), clicking (click), and navigation (navigation). 
+ When the user hovers the mouse over the main card, the background 
+ of the page will switch to the historical scene picture of the 
+ corresponding character, thereby creating an immersive visual
+  atmosphere and enhancing the user's understanding and immersion 
+  in the character's background. 
+  
+  This design utilizes immediate visual feedback to increase intuitiveness of the exploration process.
+
+When the user clicks on a card, the page will switch to the detail display interface, 
+showing the name, introduction and portrait picture of the character, allowing the information 
+to progress from the overview level to the detailed level. This hierarchical structure reduces 
+the information burden on the main interface and also conforms to the browsing logic of users 
+who explore content step by step. 
+
+In addition, at the bottom of the page, there is a quick navigation function for 12 cards.
+ Users can directly click on any card to switch, 
+ which improves the efficiency of information access and avoids repetitive operations.
+The left and right arrow buttons provide an ordered browsing method, making the interaction more complete. 
+In terms of visual design, a combination of a dark background and golden borders is adopted throughout, 
+creating a visual style similar to that of a museum exhibition, 
+thereby enhancing the historical and ceremonial feel of the content. 
+The cards are displayed centrally and are accompanied by an enlarged hover effect, 
+strengthening the "exhibition-style interactive experience". 
+In terms of technical implementation, this prototype is built using HTML, CSS and JavaScript, 
+without relying on external frameworks, to ensure a clear structure and ease of understanding for beginners.
+ The data structure stores card information in an array format, facilitating expansion and modification. 
+
+In the future, this project can be expanded to include more complex interaction systems, 
+such as adding card-flipping animations, sound effect feedback, 3D visual effects or data-driven content loading.
+ At the same time, it can also optimize mobile device compatibility and accessibility 
+ design to make it suitable for a wider range of user groups.
+
+The image resources for this project are recommended to come from free stock photo websites such as Vecteezy.
+ When using them, please abide by the relevant copyright regulations. 
+====================== */
+
+function goBack(){
+
+document.getElementById("detailPage").style.display = "none";
+document.getElementById("mainPage").style.display = "block";
+}
+
+
+updateCard();
+
+</script>
+
+</body>
+</html>
