@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Faces of the Deck</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background-color: #1f1a17;
+            color: white;
+            text-align: center;
+            transition: 0.5s;
+        }
+
+        h1 {
+            margin-top: 30px;
+        }
+
+        #mainPage {
+            margin-top: 40px;
+        }
+
+        .cardContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .arrow {
+            font-size: 40px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card {
+            width: 220px;
+            height: 320px;
+            background-color: #f0e4c2;
+            color: black;
+            border-radius: 12px;
+            border: 3px solid gold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 90px;
+            cursor: pointer;
+            transition: 0.4s;
+        }
+
+        .card:hover {
+            transform: scale(1.08);
+        }
+
+        #detailPage {
+            display: none;
+            padding: 40px;
+        }
+
+        #detailTitle {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        #detailText {
+            width: 70%;
+            margin: auto;
+            line-height: 1.7;
+            font-size: 18px;
+        }
+
+        #backButton {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 20px;
+            cursor: pointer;
+            background: gold;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .kingBg {
+            background-image: url("https://images.unsplash.com/photo-1519750157634-b6d493a0f77c");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .queenBg {
+            background-image: url("https://images.unsplash.com/photo-1505666287802-931dc83948e9");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .jackBg {
+            background-image: url("https://images.unsplash.com/photo-1524492412937-b28074a5d7da");
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="mainPage">
+
+        <h1>Faces of the Deck</h1>
+
+        <p>Hover over a card to see its world. Click to learn its history.</p>
+
+        <div class="cardContainer">
+
+            <div class="arrow" onclick="previousCard()">
+                ◀
+            </div>
+
+            <div class="card"
+                id="card"
+                onmouseover="changeBackground()"
+                onmouseout="resetBackground()"
+                onclick="showInfo()">
+
+                K
+            </div>
+
+            <div class="arrow" onclick="nextCard()">
+                ▶
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="detailPage">
+
+        <h2 id="detailTitle"></h2>
+
+        <p id="detailText"></p>
+
+        <button id="backButton" onclick="goBack()">
+            Return
+        </button>
+
+    </div>
+
+    <script>
+
+        let currentCard = 0;
+
+        const cards = [
+
+            {
+                symbol: "K",
+                name: "King",
+                text: "The King card is traditionally associated with powerful rulers. One famous example is Charlemagne, who united much of Western Europe during the early Middle Ages."
+            },
+
+            {
+                symbol: "Q",
+                name: "Queen",
+                text: "The Queen card is often linked with historical and mythical female leaders. In some traditional decks, Queen Judith is used to represent courage and wisdom."
+            },
+
+            {
+                symbol: "J",
+                name: "Jack",
+                text: "The Jack represents a knight or military servant. In French playing cards, some Jacks are based on legendary warriors such as La Hire."
+            }
+
+        ];
+
+        function updateCard() {
+
+            document.getElementById("card").innerHTML =
+                cards[currentCard].symbol;
+        }
+
+        function nextCard() {
+
+            currentCard++;
+
+            if (currentCard > 2) {
+                currentCard = 0;
+            }
+
+            updateCard();
+        }
+
+        function previousCard() {
+
+            currentCard--;
+
+            if (currentCard < 0) {
+                currentCard = 2;
+            }
+
+            updateCard();
+        }
+
+        function changeBackground() {
+
+            document.body.classList.remove(
+                "kingBg",
+                "queenBg",
+                "jackBg"
+            );
+
+            if (currentCard === 0) {
+                document.body.classList.add("kingBg");
+            }
+
+            if (currentCard === 1) {
+                document.body.classList.add("queenBg");
+            }
+
+            if (currentCard === 2) {
+                document.body.classList.add("jackBg");
+            }
+        }
+
+        function resetBackground() {
+
+            document.body.classList.remove(
+                "kingBg",
+                "queenBg",
+                "jackBg"
+            );
+        }
+
+        function showInfo() {
+
+            document.getElementById("mainPage").style.display = "none";
+
+            document.getElementById("detailPage").style.display = "block";
+
+            document.getElementById("detailTitle").innerHTML =
+                cards[currentCard].name;
+
+            document.getElementById("detailText").innerHTML =
+                cards[currentCard].text;
+        }
+
+        function goBack() {
+
+            document.getElementById("detailPage").style.display = "none";
+
+            document.getElementById("mainPage").style.display = "block";
+        }
+
+    </script>
+
+</body>
+
+</html>
